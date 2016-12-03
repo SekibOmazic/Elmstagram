@@ -19,4 +19,4 @@ decodePosts =
 getPosts : Cmd Msg
 getPosts =
     Http.send FetchPosts <|
-        Http.get "posts.json" decodePosts
+        Http.get "data/posts.json" decodePosts
