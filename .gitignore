@@ -1,6 +1,6 @@
- ckage generated files
+# elm-package generated files
 elm-stuff/
 # elm-repl generated files
 repl-temp-*
 
-index.html
+js/app.js
