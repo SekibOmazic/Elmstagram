@@ -3,6 +3,7 @@ module View exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Html.Keyed
 import Types exposing (Model, Msg(..), Post)
 import State
 
@@ -11,8 +12,10 @@ rootView : Model -> Html Msg
 rootView model =
     div [ id "app-root" ]
         [ main_ []
-            [ div [ class "photo-list" ] <|
-                List.map (viewPost model) model.posts
+            [ Html.Keyed.node "div"
+                [ class "photo-list" ]
+              <|
+                List.map (viewKeyedPost model) model.posts
             ]
         , nav []
             [ div [ class "nav-inner" ]
@@ -32,6 +35,13 @@ rootView model =
                 ]
             ]
         ]
+
+
+viewKeyedPost : Model -> Post -> ( String, Html Msg )
+viewKeyedPost model post =
+    ( post.id
+    , viewPost model post
+    )
 
 
 viewPost : Model -> Post -> Html Msg
