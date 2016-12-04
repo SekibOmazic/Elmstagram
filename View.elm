@@ -1,10 +1,10 @@
 module View exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (..)
 import Html.Keyed
-import Types exposing (Model, Msg(..), Post)
+import Types exposing (..)
 import State
 
 
@@ -12,15 +12,12 @@ rootView : Model -> Html Msg
 rootView model =
     div [ id "app-root" ]
         [ main_ []
-            [ Html.Keyed.node "div"
-                [ class "photo-list" ]
-              <|
-                List.map (viewKeyedPost model) model.posts
+            [ viewPage model
             ]
         , nav []
             [ div [ class "nav-inner" ]
-                [ a [ href "./", class "nav-logo" ]
-                    [ img [ src "./img/logo.svg" ] []
+                [ a [ href (State.toUrl ListOfPosts), class "nav-logo" ]
+                    [ img [ src "img/logo.svg" ] []
                     , text "Elmstagram"
                     ]
                 ]
@@ -30,25 +27,32 @@ rootView model =
                 [ p []
                     [ a [ href "https://github.com/SekibOmazic/Elmstagram.git" ] [ text "View Source" ]
                     , text "|"
-                    , a [ href "./" ] [ text "Elmstagram" ]
+                    , a [ href (State.toUrl ListOfPosts) ] [ text "Elmstagram" ]
                     ]
                 ]
             ]
         ]
 
 
-viewKeyedPost : Model -> Post -> ( String, Html Msg )
-viewKeyedPost model post =
-    ( post.id
-    , viewPost model post
-    )
+viewPage : Model -> Html Msg
+viewPage model =
+    case model.page of
+        ListOfPosts ->
+            Html.Keyed.node "div"
+                [ class "photo-list" ]
+            <|
+                List.map (viewKeyedPost model) model.posts
+
+        SinglePost postId ->
+            div [ class "photo-single" ]
+                [ text ("Post: " ++ postId) ]
 
 
 viewPost : Model -> Post -> Html Msg
 viewPost model post =
     figure [ class "photo-figure" ]
         [ div [ class "photo-wrap" ]
-            [ a [ href "#" ]
+            [ a [ href (State.toUrl <| SinglePost post.id) ]
                 [ img [ src post.media, alt post.text, class "photo" ] []
                 ]
             ]
@@ -67,3 +71,10 @@ viewPost model post =
                 ]
             ]
         ]
+
+
+viewKeyedPost : Model -> Post -> ( String, Html Msg )
+viewKeyedPost model post =
+    ( post.id
+    , viewPost model post
+    )
