@@ -8,15 +8,10 @@ Preview available here: [elmstagram.bkbooth.me](http://elmstagram.bkbooth.me)
 ```bash
 $ git clone https://github.com/SekibOmazic/Elmstagram.git
 $ cd Elmstagram
-$ npm install
-$ npm start
+$ elm package install
+$ elm make App.elm --output js/app.js
+$ http-server
 ```
 
-You can use `npm run build` to build everything into the `dist` directory.
+Point your browser to [http://localhost:8080](http://localhost:8080)
 
-Alternatively you can use [Yarn][] instead of `npm`.
-
-  [instagram]: https://www.instagram.com/ "Instagram"
-  [elm]: http://elm-lang.org/ "Elm"
-  [node.js]: https://nodejs.org/ "Node.js"
-  [yarn]: https://yarnpkg.com/ "Yarn"
