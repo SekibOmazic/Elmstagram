@@ -1,8 +1,20 @@
 module Rest exposing (..)
 
 import Json.Decode as Json exposing (..)
-import Types exposing (Msg(..), Post, Comment)
 import Http
+import Types exposing (Msg(..), Post, Comment)
+
+
+getPosts : Cmd Msg
+getPosts =
+    Http.send FetchPosts <|
+        Http.get "data/posts.json" decodePosts
+
+
+getPostComments : String -> Cmd Msg
+getPostComments postId =
+    Http.send (FetchComments postId) <|
+        Http.get ("data/" ++ postId ++ ".json") decodeComments
 
 
 decodePosts : Json.Decoder (List Post)
@@ -22,15 +34,3 @@ decodeComments =
         map2 Comment
             (field "username" string)
             (field "text" string)
-
-
-getPosts : Cmd Msg
-getPosts =
-    Http.send FetchPosts <|
-        Http.get "data/posts.json" decodePosts
-
-
-getPostComments : String -> Cmd Msg
-getPostComments postId =
-    Http.send (FetchComments postId) <|
-        Http.get ("data/" ++ postId ++ ".json") decodeComments
