@@ -27,11 +27,9 @@ rootView model =
         , footer []
             [ div [ class "footer-inner" ]
                 [ p []
-                    [ a [ href "https://twitter.com/bkbooth11" ] [ text "Ben Booth" ]
+                    [ a [ href "https://twitter.com/SekibOmazic" ] [ text "Sekib Omazic" ]
                     , text "|"
-                    , a [ href "https://www.instagram.com/wollongong_rips/" ] [ text "@wollongong_rips" ]
-                    , text "|"
-                    , a [ href "https://github.com/bkbooth/Elmstagram.git" ] [ text "View Source" ]
+                    , a [ href "https://github.com/SekibOmazic/Elmstagram.git" ] [ text "View Source" ]
                     , text "|"
                     , a (clickTo (State.toUrl ListOfPosts) []) [ text "Elmstagram" ]
                     ]
@@ -125,7 +123,7 @@ viewPost model post =
             ]
 
 
-viewKeyedPost : Model -> Post -> (String, Html Msg)
+viewKeyedPost : Model -> Post -> ( String, Html Msg )
 viewKeyedPost model post =
     ( post.id
     , viewPost model post
@@ -146,7 +144,7 @@ viewComments model post =
                 ++ [ viewCommentForm model post ]
 
 
-viewComment : Post -> Int -> Comment -> (String, Html Msg)
+viewComment : Post -> Int -> Comment -> ( String, Html Msg )
 viewComment post index comment =
     ( toString index
     , div [ class "comment" ]
@@ -159,7 +157,7 @@ viewComment post index comment =
     )
 
 
-viewCommentForm : Model -> Post -> (String, Html Msg)
+viewCommentForm : Model -> Post -> ( String, Html Msg )
 viewCommentForm model post =
     ( "comment-form"
     , Html.form [ onSubmit <| AddComment post.id model.newComment, class "comment-form" ]
