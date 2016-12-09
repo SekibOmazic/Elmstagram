@@ -5,6 +5,7 @@ import UrlParser exposing (..)
 import Types exposing (..)
 import Rest
 import Dict exposing (Dict)
+import List.Extra
 
 
 init : Navigation.Location -> ( Model, Cmd Msg )
@@ -63,18 +64,53 @@ update msg model =
                     ! []
 
         FetchComments postId (Ok comments) ->
-            { model
-                | comments = Dict.insert postId comments model.comments
-                , posts = List.map (setPostsComments postId <| List.length comments) model.posts
-            }
-                ! []
+            case Dict.get postId model.comments of
+                Just existingComments ->
+                    model ! []
+
+                Nothing ->
+                    { model
+                        | comments = Dict.insert postId comments model.comments
+                        , posts = List.map (setPostComments postId <| List.length comments) model.posts
+                    }
+                        ! []
 
         FetchComments postId (Err _) ->
             update (FetchComments postId <| Ok []) model
 
+        RemoveComment postId index ->
+            let
+                removePostComment : Maybe (List Comment) -> Maybe (List Comment)
+                removePostComment comments =
+                    case comments of
+                        Just comments ->
+                            Just <| List.Extra.removeAt index comments
 
-setPostsComments : String -> Int -> Post -> Post
-setPostsComments postId numberOfComments post =
+                        Nothing ->
+                            Nothing
+
+                numberOfPostComments =
+                    getNumberOfPostComments postId model.comments
+            in
+                { model
+                    | comments = Dict.update postId removePostComment model.comments
+                    , posts = List.map (setPostComments postId <| numberOfPostComments - 1) model.posts
+                }
+                    ! []
+
+
+getNumberOfPostComments : String -> Dict String (List Comment) -> Int
+getNumberOfPostComments postId comments =
+    case Dict.get postId comments of
+        Just postComments ->
+            List.length postComments
+
+        Nothing ->
+            0
+
+
+setPostComments : String -> Int -> Post -> Post
+setPostComments postId numberOfComments post =
     if post.id == postId then
         { post | comments = numberOfComments }
     else
