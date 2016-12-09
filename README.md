@@ -8,10 +8,8 @@ Preview available here: [elmstagram.bkbooth.me](http://elmstagram.bkbooth.me)
 ```bash
 $ git clone https://github.com/SekibOmazic/Elmstagram.git
 $ cd Elmstagram
-$ elm package install
-$ elm make App.elm --output js/app.js
-$ http-server
+$ npm install
+$ npm start
 ```
 
-Point your browser to [http://localhost:8080](http://localhost:8080)
-
+Point your browser to [http://localhost:3000](http://localhost:3000)
