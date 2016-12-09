@@ -1,7 +1,7 @@
 # Elmstagram
 fork of https://github.com/bkbooth/Elmstagram
 
-Preview available here: [sekibomazic.github.io/elmstagram](http://sekibomazic.github.io/elmstagram)
+Preview available here: [SekibOmazic.github.io/Elmstagram](https://SekibOmazic.github.io/Elmstagram)
 
 ## Build & Run
 
