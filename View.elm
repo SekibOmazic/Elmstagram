@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Keyed
 import Types exposing (..)
 import State
+import Dict exposing (Dict)
 
 
 rootView : Model -> Html Msg
@@ -63,29 +64,74 @@ getPost postId posts =
         List.head postsById
 
 
+getPostComments : String -> Dict String (List Comment) -> List Comment
+getPostComments postId comments =
+    case (Dict.get postId comments) of
+        Just postComments ->
+            postComments
+
+        Nothing ->
+            []
+
+
 viewPost : Model -> Post -> Html Msg
 viewPost model post =
-    figure [ class "photo-figure" ]
-        [ div [ class "photo-wrap" ]
-            [ a [ href (State.toUrl <| SinglePost post.id) ]
-                [ img [ src post.media, alt post.text, class "photo" ] []
+    let
+        displayComments =
+            case model.page of
+                SinglePost postId ->
+                    viewComments model post
+
+                ListOfPosts ->
+                    div [] []
+    in
+        figure [ class "photo-figure" ]
+            [ div [ class "photo-wrap" ]
+                [ a [ href (State.toUrl <| SinglePost post.id) ]
+                    [ img [ src post.media, alt post.text, class "photo" ] []
+                    ]
+                ]
+            , figcaption []
+                [ div [ class "caption-button" ]
+                    [ button [ onClick <| IncrementLikes post.id, class "like-button" ] [ text "♡" ]
+                    ]
+                , div [ class "caption-content" ]
+                    [ div [ class "photo-stats" ]
+                        [ strong [] [ text <| toString post.likes ]
+                        , text " likes, "
+                        , strong [] [ text <| toString post.comments ]
+                        , text " comments"
+                        ]
+                    , p [ class "photo-caption" ] [ text post.text ]
+                    , displayComments
+                    ]
                 ]
             ]
-        , figcaption []
-            [ div [ class "caption-button" ]
-                [ button [ onClick <| IncrementLikes post.id, class "like-button" ] [ text "♡" ]
-                ]
-            , div [ class "caption-content" ]
-                [ div [ class "photo-stats" ]
-                    [ strong [] [ text <| toString post.likes ]
-                    , text " likes, "
-                    , strong [] [ text <| toString post.comments ]
-                    , text " comments"
-                    ]
-                , p [ class "photo-caption" ] [ text post.text ]
-                ]
+
+
+viewComments : Model -> Post -> Html Msg
+viewComments model post =
+    let
+        listOfComments =
+            List.indexedMap (viewComment post) <|
+                getPostComments post.id model.comments
+    in
+        Html.Keyed.node "div"
+            [ class "comments" ]
+        <|
+            listOfComments
+
+
+viewComment : Post -> Int -> Comment -> ( String, Html Msg )
+viewComment post index comment =
+    ( toString index
+    , div [ class "comment" ]
+        [ p []
+            [ strong [] [ text comment.username ]
+            , text comment.text
             ]
         ]
+    )
 
 
 viewKeyedPost : Model -> Post -> ( String, Html Msg )
